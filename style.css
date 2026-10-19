@@ -1,0 +1,60 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	background-color: #f4f4f4;
+	font-family: Arial, sans-serif;
+	padding: 20px;
+	color: #333;
+}
+
+h1 {
+	border-radius: 10px;
+	margin-bottom: 20px;
+}
+
+h2 {
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+div {
+	background-color: white;
+	padding: 15px;
+	margin-bottom: 15px;
+	border-radius: 10px;
+	border: 1px solid #ccc;
+}
+
+#ticketList button {
+	margin: 5px;
+}
+
+button {
+	padding: 8px 12px;
+	border: none;
+	border-radius: 5px;
+	background-color: black;
+	color: white;
+	cursor: pointer;
+}
+
+button:hover {
+	background-color: rgb(180, 180, 180);
+	color: black;
+}
+
+input,
+select {
+	padding: 8px;
+	border: 1px solid #999;
+	border-radius: 5px;
+	margin-right: 5px;
+}
+#ticketDetails p,
+#releaseAnalysis p {
+	margin: 8px 0;
+}

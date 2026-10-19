@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Release Decision System</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<h1>Release Decision System</h1>
+
+		<h2>Search Ticket</h2>
+		<form id="searchForm">
+			<input type="number" id="searchId" placeholder="Enter ticket ID" />
+			<button type="submit" id="searchButton">Search</button><br /><br />
+		</form>
+
+		<h2>Add ticket</h2>
+		<form id="addForm">
+			<input type="text" id="addTitle" placeholder="Enter ticket title" />
+			<button type="submit" id="addTicketButton">Add ticket</button><br /><br />
+		</form>
+
+		<h2>Tickets</h2>
+		<h3>Filter</h3>
+		<div>FilterButtons</div>
+		<h3>Sort</h3>
+		<div>Sort Buttons</div>
+		<div id="ticketList"></div>
+
+		<div id="ticketDetails" hidden></div>
+
+		<div id="releaseAnalysis"></div>
+
+		<script src="script.js"></script>
+	</body>
+</html>

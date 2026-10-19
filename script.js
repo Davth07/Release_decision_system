@@ -1,0 +1,461 @@
+"use strict";
+//** Tickets
+let tickets = [
+    {
+        id: 101,
+        title: "Login outage",
+        severity: 5,
+        status: "open",
+        owner: "Ava",
+        remainingHours: 6,
+        customerVip: true,
+        blocked: false,
+    },
+    {
+        id: 102,
+        title: "Export slow",
+        severity: 3,
+        status: "open",
+        owner: "Noah",
+        remainingHours: 4,
+        customerVip: false,
+        blocked: false,
+    },
+    {
+        id: 103,
+        title: "Payment error",
+        severity: 5,
+        status: "testing",
+        owner: "Ava",
+        remainingHours: 9,
+        customerVip: true,
+        blocked: true,
+    },
+    {
+        id: 104,
+        title: "Avatar upload",
+        severity: 2,
+        status: "done",
+        owner: "Mira",
+        remainingHours: 3,
+        customerVip: false,
+        blocked: false,
+    },
+    {
+        id: 105,
+        title: "Search ranking",
+        severity: 3,
+        status: "open",
+        owner: "Noah",
+        remainingHours: 7,
+        customerVip: true,
+        blocked: false,
+    },
+    {
+        id: 106,
+        title: "Role permissions",
+        severity: 4,
+        status: "testing",
+        owner: "Leo",
+        remainingHours: 8,
+        customerVip: false,
+        blocked: false,
+    },
+    {
+        id: 107,
+        title: "Email delay",
+        severity: 2,
+        status: "open",
+        owner: null,
+        remainingHours: 2,
+        customerVip: true,
+        blocked: false,
+    },
+    {
+        id: 108,
+        title: "Backup failure",
+        severity: 5,
+        status: "open",
+        owner: "Mira",
+        remainingHours: 10,
+        customerVip: false,
+        blocked: true,
+    },
+    {
+        id: 109,
+        title: "Report totals",
+        severity: 3,
+        status: "done",
+        owner: "Leo",
+        remainingHours: 5,
+        customerVip: false,
+        blocked: false,
+    },
+    {
+        id: 110,
+        title: "Session timeout",
+        severity: 4,
+        status: "open",
+        owner: "Ava",
+        remainingHours: 6,
+        customerVip: false,
+        blocked: false,
+    },
+    {
+        id: 111,
+        title: "Mobile menu",
+        severity: 1,
+        status: "done",
+        owner: "Noah",
+        remainingHours: 2,
+        customerVip: false,
+        blocked: false,
+    },
+    {
+        id: 112,
+        title: "Invoice mismatch",
+        severity: 4,
+        status: "testing",
+        owner: null,
+        remainingHours: 7,
+        customerVip: true,
+        blocked: false,
+    },
+];
+function saveTickets() {
+    localStorage.setItem("tickets", JSON.stringify(tickets));
+}
+const savedTickets = localStorage.getItem("tickets");
+if (savedTickets !== null) {
+    tickets = JSON.parse(savedTickets);
+}
+//* Checks classification of a ticket
+function checkType(ticket) {
+    if ((ticket.blocked && ticket.severity >= 4) ||
+        (ticket.status === "open" && ticket.severity === 5)) {
+        return "RELEASE_BLOCKER";
+    }
+    if (ticket.customerVip && ticket.severity >= 3 && ticket.status !== "done") {
+        return "PRIORITY";
+    }
+    if (ticket.owner === null && ticket.status !== "done") {
+        return "UNASSIGNED";
+    }
+    if (ticket.status === "done") {
+        return "DONE";
+    }
+    return "ACTIVE";
+}
+//* Find ticket by ID
+function findTicket(id) {
+    for (const ticket of tickets) {
+        if (ticket.id === id) {
+            return ticket;
+        }
+    }
+    return null;
+}
+//* Summarizes the important numbers
+function getSummary() {
+    let blockers = 0;
+    let priority = 0;
+    let unassigned = 0;
+    let active = 0;
+    let done = 0;
+    let activeHours = 0;
+    for (const ticket of tickets) {
+        const classification = checkType(ticket);
+        if (classification === "RELEASE_BLOCKER") {
+            blockers++;
+        }
+        else if (classification === "PRIORITY") {
+            priority++;
+        }
+        else if (classification === "UNASSIGNED") {
+            unassigned++;
+        }
+        else if (classification === "DONE") {
+            done++;
+        }
+        else {
+            active++;
+        }
+        if (ticket.status !== "done") {
+            activeHours += ticket.remainingHours;
+        }
+    }
+    let decision = "RELEASE";
+    if (blockers > 0) {
+        decision = "BLOCK";
+    }
+    else if (unassigned > 0 || activeHours > 35) {
+        decision = "REVIEW";
+    }
+    return {
+        blockers,
+        priority,
+        unassigned,
+        active,
+        done,
+        activeHours,
+        decision,
+    };
+}
+//* Function to show the tickets on the website
+function showTickets(ticketArray = tickets) {
+    const ticketList = document.getElementById("ticketList");
+    ticketList.innerHTML = "";
+    for (const ticket of ticketArray) {
+        const button = document.createElement("button");
+        button.textContent = ticket.id + " - " + ticket.title;
+        button.addEventListener("click", function () {
+            showTicketDetails(ticket);
+        });
+        ticketList.appendChild(button);
+        ticketList.appendChild(document.createElement("br"));
+    }
+}
+//* Shows ticket details when clicked. Also has edit and close button
+function showTicketDetails(ticket) {
+    const details = document.getElementById("ticketDetails");
+    let owner = ticket.owner;
+    if (owner === null) {
+        owner = "No owner";
+    }
+    details.innerHTML = `
+    <h2>Ticket</h2>
+    <p>ID: ${ticket.id}</p>
+    <p>Title: ${ticket.title}</p>
+    <p>Severity: ${ticket.severity}</p>
+    <p>Status: ${ticket.status}</p>
+    <p>Owner: ${owner}</p>
+    <p>Remaining hours: ${ticket.remainingHours}</p>
+    <p>Customer VIP: ${ticket.customerVip}</p>
+    <p>Blocked: ${ticket.blocked}</p>
+    <p>Classification: ${checkType(ticket)}</p>
+
+    <button id="editButton">Edit</button>
+    <button id="closeButton">Close</button>
+	<button id="deleteButton" style="background-color: red">Delete</button>
+  `;
+    details.hidden = false;
+    const editBtn = document.getElementById("editButton");
+    editBtn.addEventListener("click", function () {
+        editTicket(ticket);
+    });
+    const closeBtn = document.getElementById("closeButton");
+    closeBtn.addEventListener("click", function () {
+        details.hidden = true;
+    });
+    const deleteBtn = document.getElementById("deleteButton");
+    deleteBtn.addEventListener("click", function () {
+        if (deleteBtn.textContent === "Delete") {
+            deleteBtn.textContent = "Confirm Delete?";
+            const cancelDeleteBtn = document.createElement("button");
+            cancelDeleteBtn.textContent = "Cancel Delete";
+            cancelDeleteBtn.id = "cancelDeleteButton";
+            details.appendChild(cancelDeleteBtn);
+            cancelDeleteBtn.addEventListener("click", function () {
+                deleteBtn.textContent = "Delete";
+                cancelDeleteBtn.remove();
+            });
+        }
+        else {
+            let index = -1;
+            for (let i = 0; i < tickets.length; i++) {
+                if (tickets[i].id === ticket.id) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index !== -1) {
+                tickets.splice(index, 1);
+            }
+            saveTickets();
+            details.hidden = true;
+            details.innerHTML = "";
+            showTickets();
+            showSummary();
+        }
+    });
+}
+//* Shows form to edit ticket
+function editTicket(ticket) {
+    const details = document.getElementById("ticketDetails");
+    details.innerHTML = `
+    <h2>Edit Ticket</h2>
+
+    <p>ID: ${ticket.id}</p>
+
+    <p>Title:</p>
+    <input type="text" id="editTitle">
+
+    <p>Severity:</p>
+    <select id="editSeverity">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+
+    <p>Status:</p>
+    <select id="editStatus">
+      <option value="open">open</option>
+      <option value="testing">testing</option>
+      <option value="done">done</option>
+    </select>
+
+    <p>Owner:</p>
+    <input type="text" id="editOwner">
+
+    <p>Remaining hours:</p>
+    <input type="number" id="editHours" min="0">
+
+    <p>Customer VIP:</p>
+    <select id="editVip">
+      <option value="true">true</option>
+      <option value="false">false</option>
+    </select>
+
+    <p>Blocked:</p>
+    <select id="editBlocked">
+      <option value="true">true</option>
+      <option value="false">false</option>
+    </select>
+
+    <p>Classification: ${checkType(ticket)}</p>
+
+    <br><br>
+
+    <button id="saveTicketButton">Save</button>
+    <button id="cancelEditButton">Cancel</button>
+  `;
+    document.getElementById("editTitle").value =
+        ticket.title;
+    document.getElementById("editSeverity").value = String(ticket.severity);
+    document.getElementById("editStatus").value =
+        ticket.status;
+    document.getElementById("editOwner").value =
+        ticket.owner ?? "";
+    document.getElementById("editHours").value = String(ticket.remainingHours);
+    document.getElementById("editVip").value = String(ticket.customerVip);
+    document.getElementById("editBlocked").value = String(ticket.blocked);
+    const saveTicketBtn = document.getElementById("saveTicketButton");
+    saveTicketBtn.addEventListener("click", function () {
+        saveTicket(ticket);
+    });
+    const cancelEditBtn = document.getElementById("cancelEditButton");
+    cancelEditBtn.addEventListener("click", function () {
+        showTicketDetails(ticket);
+    });
+}
+//* Saves the edit of the ticket
+function saveTicket(ticket) {
+    const title = document.getElementById("editTitle");
+    const severity = document.getElementById("editSeverity");
+    const status = document.getElementById("editStatus");
+    const owner = document.getElementById("editOwner");
+    const hours = document.getElementById("editHours");
+    const vip = document.getElementById("editVip");
+    const blocked = document.getElementById("editBlocked");
+    if (title.value.trim() === "") {
+        alert("Enter a title.");
+        return;
+    }
+    if (hours.value === "" || Number(hours.value) < 0) {
+        alert("Enter valid remaining hours.");
+        return;
+    }
+    ticket.title = title.value;
+    ticket.severity = Number(severity.value);
+    ticket.status = status.value;
+    if (owner.value.trim() === "") {
+        ticket.owner = null;
+    }
+    else {
+        ticket.owner = owner.value;
+    }
+    ticket.remainingHours = Number(hours.value);
+    ticket.customerVip = vip.value === "true";
+    ticket.blocked = blocked.value === "true";
+    saveTickets();
+    showTickets();
+    showTicketDetails(ticket);
+    showSummary();
+}
+//* Shows the summary of all tickets and the release decision.
+function showSummary() {
+    const summary = getSummary();
+    const result = document.getElementById("releaseAnalysis");
+    result.innerHTML = `
+        <h2>Release Analysis</h2>
+        <p>Total tickets: ${tickets.length}</p>
+        <p>Release blockers: ${summary.blockers}</p>
+        <p>Priority tickets: ${summary.priority}</p>
+        <p>Unassigned tickets: ${summary.unassigned}</p>
+        <p>Active tickets: ${summary.active}</p>
+        <p>Done tickets: ${summary.done}</p>
+        <p>Total active hours: ${summary.activeHours}</p>
+        <h3>Release Decision: ${summary.decision}</h3>
+    `;
+}
+//* Searches for ticket by id when search button is pressed
+const searchForm = document.getElementById("searchForm");
+searchForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    const input = document.getElementById("searchId");
+    const id = Number(input.value);
+    const ticketList = document.getElementById("ticketList");
+    const details = document.getElementById("ticketDetails");
+    details.hidden = true;
+    details.innerHTML = "";
+    if (input.value.trim() === "") {
+        showTickets();
+        return;
+    }
+    const ticket = findTicket(id);
+    if (ticket === null) {
+        ticketList.innerHTML = "<p>No ticket found.</p>";
+        return;
+    }
+    showTickets([ticket]);
+});
+//* Eventlistener for adding a ticket
+const addForm = document.getElementById("addForm");
+addForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    const input = document.getElementById("addTitle");
+    if (input.value.trim() === "") {
+        alert("Enter a ticket title");
+        return;
+    }
+    let newId = 101;
+    for (const ticket of tickets) {
+        if (ticket.id >= newId) {
+            newId = ticket.id + 1;
+        }
+    }
+    const newTicket = {
+        id: newId,
+        title: input.value,
+        severity: 1,
+        status: "open",
+        owner: null,
+        remainingHours: 0,
+        customerVip: false,
+        blocked: false,
+    };
+    tickets.push(newTicket);
+    saveTickets();
+    input.value = "";
+    showTickets();
+    showSummary();
+    showTicketDetails(newTicket);
+});
+//* Shows tickets and summary when page loads
+showTickets();
+showSummary();
+//? Add delete button to tickets
+//? Add filter
+//? Add sorting (Severity increasing/decreasing. Alphabetical increasing/decreasing. ID increasing/decreasing. Remaining hours increasing/decreasing)
