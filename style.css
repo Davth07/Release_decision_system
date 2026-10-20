@@ -58,3 +58,12 @@ select {
 #releaseAnalysis p {
 	margin: 8px 0;
 }
+#filterButtons {
+	display: flex;
+	gap: 5px;
+}
+@media (max-width: 450px) {
+	#ticketList button {
+		width: 100%;
+	}
+}

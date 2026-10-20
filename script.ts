@@ -543,11 +543,179 @@ addForm.addEventListener("submit", function (event) {
 	showTicketDetails(newTicket);
 });
 
+//* Filter tickets by button
+const allFilter = document.getElementById("allFilter")!;
+//status
+const testingFilter = document.getElementById("testingFilter")!;
+const doneFilter = document.getElementById("doneFilter")!;
+const openFilter = document.getElementById("openFilter")!;
+// class
+const blockerFilter = document.getElementById("blockerFilter")!;
+const priorityFilter = document.getElementById("priorityFilter")!;
+const unassignedFilter = document.getElementById("unassignedFilter")!;
+const activeFilter = document.getElementById("activeFilter")!;
+//blocked
+const blockedFilter = document.getElementById("blockedFilter");
+
+allFilter.addEventListener("click", function () {
+	showTickets();
+});
+testingFilter.addEventListener("click", function () {
+	const filteredTickets: Ticket[] = [];
+
+	for (const ticket of tickets) {
+		if (ticket.status === "testing") {
+			filteredTickets.push(ticket);
+		}
+	}
+	showTickets(filteredTickets);
+});
+openFilter.addEventListener("click", function () {
+	const filteredTickets: Ticket[] = [];
+
+	for (const ticket of tickets) {
+		if (ticket.status === "open") {
+			filteredTickets.push(ticket);
+		}
+	}
+	showTickets(filteredTickets);
+});
+doneFilter.addEventListener("click", function () {
+	const filteredTickets: Ticket[] = [];
+
+	for (const ticket of tickets) {
+		if (ticket.status === "done") {
+			filteredTickets.push(ticket);
+		}
+	}
+	showTickets(filteredTickets);
+});
+blockerFilter.addEventListener("click", function () {
+	const filteredTickets: Ticket[] = [];
+	for (const ticket of tickets) {
+		if (checkType(ticket) === "RELEASE_BLOCKER") {
+			filteredTickets.push(ticket);
+		}
+	}
+	showTickets(filteredTickets);
+});
+priorityFilter.addEventListener("click", function () {
+	const filteredTickets: Ticket[] = [];
+
+	for (const ticket of tickets) {
+		if (checkType(ticket) === "PRIORITY") {
+			filteredTickets.push(ticket);
+		}
+	}
+	showTickets(filteredTickets);
+});
+unassignedFilter.addEventListener("click", function () {
+	const filteredTickets: Ticket[] = [];
+
+	for (const ticket of tickets) {
+		if (checkType(ticket) === "UNASSIGNED") {
+			filteredTickets.push(ticket);
+		}
+	}
+	showTickets(filteredTickets);
+});
+activeFilter.addEventListener("click", function () {
+	const filteredTickets: Ticket[] = [];
+
+	for (const ticket of tickets) {
+		if (checkType(ticket) === "ACTIVE") {
+			filteredTickets.push(ticket);
+		}
+	}
+	showTickets(filteredTickets);
+});
+blockedFilter?.addEventListener("click", function () {
+	const filteredTickets: Ticket[] = [];
+
+	for (const ticket of tickets) {
+		if (ticket.blocked === true) {
+			filteredTickets.push(ticket);
+		}
+	}
+	showTickets(filteredTickets);
+});
+
+//* Sort tickets
+let currentSort = "";
+let ascending = true;
+
+function sortTickets(sortType: string): void {
+	if (currentSort === sortType) {
+		ascending = !ascending;
+	} else {
+		currentSort = sortType;
+		ascending = true;
+	}
+
+	const sortedTickets = [...tickets];
+
+	if (sortType === "id") {
+		sortedTickets.sort(function (a, b) {
+			return a.id - b.id;
+		});
+	} else if (sortType === "severity") {
+		sortedTickets.sort(function (a, b) {
+			return a.severity - b.severity;
+		});
+	} else if (sortType === "title") {
+		sortedTickets.sort(function (a, b) {
+			return a.title.localeCompare(b.title);
+		});
+	} else if (sortType === "hours") {
+		sortedTickets.sort(function (a, b) {
+			return a.remainingHours - b.remainingHours;
+		});
+	}
+	if (ascending === false) {
+		sortedTickets.reverse();
+	}
+
+	const idSort = document.getElementById("idSort")!;
+	const severitySort = document.getElementById("severitySort")!;
+	const titleSort = document.getElementById("alphabeticalSort")!;
+	const hoursSort = document.getElementById("hoursSort")!;
+
+	idSort.textContent = "ID";
+	severitySort.textContent = "Severity";
+	titleSort.textContent = "Alphabetically";
+	hoursSort.textContent = "Remaining Hours";
+
+	//* adding a arrow symbol to textcontent of sortbutton to show that the sort is ascending or descending
+	if (currentSort === "id") {
+		idSort.textContent += ascending ? " ↑" : " ↓";
+	} else if (currentSort === "severity") {
+		severitySort.textContent += ascending ? " ↑" : " ↓";
+	} else if (currentSort === "title") {
+		titleSort.textContent += ascending ? " ↑" : " ↓";
+	} else if (currentSort === "hours") {
+		hoursSort.textContent += ascending ? " ↑" : " ↓";
+	}
+
+	showTickets(sortedTickets);
+}
+const idSort = document.getElementById("idSort")!;
+const severitySort = document.getElementById("severitySort")!;
+const titleSort = document.getElementById("alphabeticalSort")!;
+const hoursSort = document.getElementById("hoursSort")!;
+
+idSort.addEventListener("click", function () {
+	sortTickets("id");
+});
+severitySort.addEventListener("click", function () {
+	sortTickets("severity");
+});
+titleSort.addEventListener("click", function () {
+	sortTickets("title");
+});
+hoursSort.addEventListener("click", function () {
+	sortTickets("hours");
+});
 //* Shows tickets and summary when page loads
 
 showTickets();
 showSummary();
-
-//? Add filter
-
-//? Add sorting (Severity increasing/decreasing. Alphabetical increasing/decreasing. ID increasing/decreasing. Remaining hours increasing/decreasing)
