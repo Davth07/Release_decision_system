@@ -11,3 +11,10 @@ It is also possible to delete a ticket, click once and it will ask you to press 
 At the bottom of the website is a analysis/summary that shows amount of tickets, each classification amount, total active hours and last but not least Release decision highlighted.
 
 There are two placeholder fields ish above the tickets with "Filter" and "Sort" it is where I will add filter buttons and sort buttons tomorrow.
+
+
+Progress Monday october 19 2026: 
+Completed Add button, edit, and delete.
+Everything mentioned above works.
+No blockers for monday.
+Tuesdays first task is to add filter buttons.
