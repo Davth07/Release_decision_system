@@ -26,3 +26,9 @@ Completed Filter and sort
 Everything mentioned above works.
 No blockers today either.
 Wednesdays first task will be to fix the CSS and find another thing to add.
+
+Progress Wednesday october 21 2026: 
+Fixed filter and sort so they could work together and working directly after adding/editing a ticket + fixed a little CSS.
+Everything mentioned above works...
+There was no blocker keeping me from fixing the code.
+For tomorrow thursday I am not sure what to do.. Maybe find something extra to add to the website or work more with the CSS. Or freshen up the javascript.. (make it easier to read / shorter).
