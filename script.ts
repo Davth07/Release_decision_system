@@ -156,17 +156,15 @@ function checkType(ticket: Ticket): Classification {
 		(ticket.status === "open" && ticket.severity === 5)
 	) {
 		return "RELEASE_BLOCKER";
-	}
-
-	if (ticket.customerVip && ticket.severity >= 3 && ticket.status !== "done") {
-		return "PRIORITY";
-	}
-
-	if (ticket.owner === null && ticket.status !== "done") {
+	} else if (ticket.owner === null && ticket.status !== "done") {
 		return "UNASSIGNED";
-	}
-
-	if (ticket.status === "done") {
+	} else if (
+		ticket.customerVip &&
+		ticket.severity >= 3 &&
+		ticket.status !== "done"
+	) {
+		return "PRIORITY";
+	} else if (ticket.status === "done") {
 		return "DONE";
 	}
 
@@ -323,7 +321,7 @@ function showTicketDetails(ticket: Ticket): void {
 			details.hidden = true;
 			details.innerHTML = "";
 
-			showTickets();
+			updateList();
 			showSummary();
 		}
 	});
@@ -456,7 +454,7 @@ function saveTicket(ticket: Ticket): void {
 
 	saveTickets();
 
-	showTickets();
+	updateList();
 	showTicketDetails(ticket);
 	showSummary();
 }
@@ -534,16 +532,82 @@ addForm.addEventListener("submit", function (event) {
 		customerVip: false,
 		blocked: false,
 	};
-	tickets.push(newTicket);
-	saveTickets();
 	input.value = "";
 
-	showTickets();
+	tickets.push(newTicket);
+	saveTickets();
+	updateList();
 	showSummary();
 	showTicketDetails(newTicket);
 });
 
-//* Filter tickets by button
+//* Filter tickets function
+
+let currentFilter = "all";
+let currentSort = "";
+let ascending = true;
+
+function updateList(): void {
+	let displayedTickets = [...tickets];
+	const filteredTickets: Ticket[] = [];
+
+	for (const ticket of displayedTickets) {
+		if (currentFilter === "all") {
+			filteredTickets.push(ticket);
+		} else if (currentFilter === "open" && ticket.status === "open") {
+			filteredTickets.push(ticket);
+		} else if (currentFilter === "testing" && ticket.status === "testing") {
+			filteredTickets.push(ticket);
+		} else if (currentFilter === "done" && ticket.status === "done") {
+			filteredTickets.push(ticket);
+		} else if (
+			currentFilter === "blocker" &&
+			checkType(ticket) === "RELEASE_BLOCKER"
+		) {
+			filteredTickets.push(ticket);
+		} else if (
+			currentFilter === "priority" &&
+			checkType(ticket) === "PRIORITY"
+		) {
+			filteredTickets.push(ticket);
+		} else if (
+			currentFilter === "unassigned" &&
+			checkType(ticket) === "UNASSIGNED"
+		) {
+			filteredTickets.push(ticket);
+		} else if (currentFilter === "active" && checkType(ticket) === "ACTIVE") {
+			filteredTickets.push(ticket);
+		} else if (currentFilter === "blocked" && ticket.blocked === true) {
+			filteredTickets.push(ticket);
+		}
+	}
+
+	if (currentSort === "id") {
+		filteredTickets.sort(function (a, b) {
+			return a.id - b.id;
+		});
+	} else if (currentSort === "severity") {
+		filteredTickets.sort(function (a, b) {
+			return a.severity - b.severity;
+		});
+	} else if (currentSort === "title") {
+		filteredTickets.sort(function (a, b) {
+			return a.title.localeCompare(b.title);
+		});
+	} else if (currentSort === "hours") {
+		filteredTickets.sort(function (a, b) {
+			return a.remainingHours - b.remainingHours;
+		});
+	}
+
+	if (currentSort !== "" && ascending === false) {
+		filteredTickets.reverse();
+	}
+
+	showTickets(filteredTickets);
+}
+
+//* filter buttons
 const allFilter = document.getElementById("allFilter")!;
 //status
 const testingFilter = document.getElementById("testingFilter")!;
@@ -555,94 +619,45 @@ const priorityFilter = document.getElementById("priorityFilter")!;
 const unassignedFilter = document.getElementById("unassignedFilter")!;
 const activeFilter = document.getElementById("activeFilter")!;
 //blocked
-const blockedFilter = document.getElementById("blockedFilter");
+const blockedFilter = document.getElementById("blockedFilter")!;
 
 allFilter.addEventListener("click", function () {
-	showTickets();
-});
-testingFilter.addEventListener("click", function () {
-	const filteredTickets: Ticket[] = [];
-
-	for (const ticket of tickets) {
-		if (ticket.status === "testing") {
-			filteredTickets.push(ticket);
-		}
-	}
-	showTickets(filteredTickets);
+	currentFilter = "all";
+	updateList();
 });
 openFilter.addEventListener("click", function () {
-	const filteredTickets: Ticket[] = [];
-
-	for (const ticket of tickets) {
-		if (ticket.status === "open") {
-			filteredTickets.push(ticket);
-		}
-	}
-	showTickets(filteredTickets);
+	currentFilter = "open";
+	updateList();
+});
+testingFilter.addEventListener("click", function () {
+	currentFilter = "testing";
+	updateList();
 });
 doneFilter.addEventListener("click", function () {
-	const filteredTickets: Ticket[] = [];
-
-	for (const ticket of tickets) {
-		if (ticket.status === "done") {
-			filteredTickets.push(ticket);
-		}
-	}
-	showTickets(filteredTickets);
+	currentFilter = "done";
+	updateList();
 });
 blockerFilter.addEventListener("click", function () {
-	const filteredTickets: Ticket[] = [];
-	for (const ticket of tickets) {
-		if (checkType(ticket) === "RELEASE_BLOCKER") {
-			filteredTickets.push(ticket);
-		}
-	}
-	showTickets(filteredTickets);
+	currentFilter = "blocker";
+	updateList();
 });
 priorityFilter.addEventListener("click", function () {
-	const filteredTickets: Ticket[] = [];
-
-	for (const ticket of tickets) {
-		if (checkType(ticket) === "PRIORITY") {
-			filteredTickets.push(ticket);
-		}
-	}
-	showTickets(filteredTickets);
+	currentFilter = "priority";
+	updateList();
 });
 unassignedFilter.addEventListener("click", function () {
-	const filteredTickets: Ticket[] = [];
-
-	for (const ticket of tickets) {
-		if (checkType(ticket) === "UNASSIGNED") {
-			filteredTickets.push(ticket);
-		}
-	}
-	showTickets(filteredTickets);
+	currentFilter = "unassigned";
+	updateList();
 });
 activeFilter.addEventListener("click", function () {
-	const filteredTickets: Ticket[] = [];
-
-	for (const ticket of tickets) {
-		if (checkType(ticket) === "ACTIVE") {
-			filteredTickets.push(ticket);
-		}
-	}
-	showTickets(filteredTickets);
+	currentFilter = "active";
+	updateList();
 });
-blockedFilter?.addEventListener("click", function () {
-	const filteredTickets: Ticket[] = [];
-
-	for (const ticket of tickets) {
-		if (ticket.blocked === true) {
-			filteredTickets.push(ticket);
-		}
-	}
-	showTickets(filteredTickets);
+blockedFilter.addEventListener("click", function () {
+	currentFilter = "blocked";
+	updateList();
 });
-
 //* Sort tickets
-let currentSort = "";
-let ascending = true;
 
 function sortTickets(sortType: string): void {
 	if (currentSort === sortType) {
@@ -651,30 +666,6 @@ function sortTickets(sortType: string): void {
 		currentSort = sortType;
 		ascending = true;
 	}
-
-	const sortedTickets = [...tickets];
-
-	if (sortType === "id") {
-		sortedTickets.sort(function (a, b) {
-			return a.id - b.id;
-		});
-	} else if (sortType === "severity") {
-		sortedTickets.sort(function (a, b) {
-			return a.severity - b.severity;
-		});
-	} else if (sortType === "title") {
-		sortedTickets.sort(function (a, b) {
-			return a.title.localeCompare(b.title);
-		});
-	} else if (sortType === "hours") {
-		sortedTickets.sort(function (a, b) {
-			return a.remainingHours - b.remainingHours;
-		});
-	}
-	if (ascending === false) {
-		sortedTickets.reverse();
-	}
-
 	const idSort = document.getElementById("idSort")!;
 	const severitySort = document.getElementById("severitySort")!;
 	const titleSort = document.getElementById("alphabeticalSort")!;
@@ -685,7 +676,6 @@ function sortTickets(sortType: string): void {
 	titleSort.textContent = "Alphabetically";
 	hoursSort.textContent = "Remaining Hours";
 
-	//* adding a arrow symbol to textcontent of sortbutton to show that the sort is ascending or descending
 	if (currentSort === "id") {
 		idSort.textContent += ascending ? " ↑" : " ↓";
 	} else if (currentSort === "severity") {
@@ -695,8 +685,7 @@ function sortTickets(sortType: string): void {
 	} else if (currentSort === "hours") {
 		hoursSort.textContent += ascending ? " ↑" : " ↓";
 	}
-
-	showTickets(sortedTickets);
+	updateList();
 }
 const idSort = document.getElementById("idSort")!;
 const severitySort = document.getElementById("severitySort")!;
@@ -717,5 +706,5 @@ hoursSort.addEventListener("click", function () {
 });
 //* Shows tickets and summary when page loads
 
-showTickets();
+updateList();
 showSummary();
