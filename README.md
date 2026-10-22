@@ -32,3 +32,5 @@ Fixed filter and sort so they could work together and working directly after add
 Everything mentioned above works...
 There was no blocker keeping me from fixing the code.
 For tomorrow thursday I am not sure what to do.. Maybe find something extra to add to the website or work more with the CSS. Or freshen up the javascript.. (make it easier to read / shorter).
+
+Progress Thursday october 22 2026:
