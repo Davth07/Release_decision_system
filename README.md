@@ -12,6 +12,7 @@ On tuesday 20 october 2026 I added a filter and a sort section with buttons. If 
 
 At the bottom of the website is a analysis/summary that shows amount of tickets, each classification amount, total active hours and last but not least Release decision highlighted.
 
+Progressions:
 
 
 Progress Monday october 19 2026: 
@@ -34,3 +35,7 @@ There was no blocker keeping me from fixing the code.
 For tomorrow thursday I am not sure what to do.. Maybe find something extra to add to the website or work more with the CSS. Or freshen up the javascript.. (make it easier to read / shorter).
 
 Progress Thursday october 22 2026:
+Changed some CSS and made slight changes in JS files.
+Everything mentioned above progression logs works.
+No blockers except the lack of idea what to do.
+For friday I will turn in the project, I still have no idea what to add or work more on.
