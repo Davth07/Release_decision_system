@@ -149,6 +149,7 @@ const savedTickets = localStorage.getItem("tickets");
 if (savedTickets !== null) {
 	tickets = JSON.parse(savedTickets) as Ticket[];
 }
+
 //* Checks classification of a ticket
 function checkType(ticket: Ticket): Classification {
 	if (
@@ -269,7 +270,7 @@ function showTicketDetails(ticket: Ticket): void {
     <p>Remaining hours: ${ticket.remainingHours}</p>
     <p>Customer VIP: ${ticket.customerVip}</p>
     <p>Blocked: ${ticket.blocked}</p>
-    <p>Classification: ${checkType(ticket)}</p>
+    <p><b>Classification: ${checkType(ticket)}</b></p>
 
     <button id="editButton">Edit</button>
     <button id="closeButton">Close</button>
@@ -373,9 +374,9 @@ function editTicket(ticket: Ticket): void {
       <option value="false">false</option>
     </select>
 
-    <p>Classification: ${checkType(ticket)}</p>
+    <p><b>Classification: ${checkType(ticket)}</b></p>
 
-    <br><br>
+    <br>
 
     <button id="saveTicketButton">Save</button>
     <button id="cancelEditButton">Cancel</button>
@@ -542,7 +543,6 @@ addForm.addEventListener("submit", function (event) {
 });
 
 //* Filter tickets function
-
 let currentFilter = "all";
 let currentSort = "";
 let ascending = true;
@@ -657,8 +657,8 @@ blockedFilter.addEventListener("click", function () {
 	currentFilter = "blocked";
 	updateList();
 });
-//* Sort tickets
 
+//* Sort tickets
 function sortTickets(sortType: string): void {
 	if (currentSort === sortType) {
 		ascending = !ascending;
@@ -704,7 +704,7 @@ titleSort.addEventListener("click", function () {
 hoursSort.addEventListener("click", function () {
 	sortTickets("hours");
 });
-//* Shows tickets and summary when page loads
 
+//* Shows tickets and summary when page loads
 updateList();
 showSummary();

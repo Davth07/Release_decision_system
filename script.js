@@ -234,7 +234,7 @@ function showTicketDetails(ticket) {
     <p>Remaining hours: ${ticket.remainingHours}</p>
     <p>Customer VIP: ${ticket.customerVip}</p>
     <p>Blocked: ${ticket.blocked}</p>
-    <p>Classification: ${checkType(ticket)}</p>
+    <p><b>Classification: ${checkType(ticket)}</b></p>
 
     <button id="editButton">Edit</button>
     <button id="closeButton">Close</button>
@@ -328,9 +328,9 @@ function editTicket(ticket) {
       <option value="false">false</option>
     </select>
 
-    <p>Classification: ${checkType(ticket)}</p>
+    <p><b>Classification: ${checkType(ticket)}</b></p>
 
-    <br><br>
+    <br>
 
     <button id="saveTicketButton">Save</button>
     <button id="cancelEditButton">Cancel</button>
@@ -457,7 +457,7 @@ addForm.addEventListener("submit", function (event) {
     showSummary();
     showTicketDetails(newTicket);
 });
-//* Filter tickets by button
+//* Filter tickets function
 let currentFilter = "all";
 let currentSort = "";
 let ascending = true;
@@ -521,6 +521,7 @@ function updateList() {
     }
     showTickets(filteredTickets);
 }
+//* filter buttons
 const allFilter = document.getElementById("allFilter");
 //status
 const testingFilter = document.getElementById("testingFilter");
@@ -569,7 +570,7 @@ blockedFilter.addEventListener("click", function () {
     currentFilter = "blocked";
     updateList();
 });
-// //* Sort tickets
+//* Sort tickets
 function sortTickets(sortType) {
     if (currentSort === sortType) {
         ascending = !ascending;
