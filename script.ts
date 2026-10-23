@@ -141,6 +141,7 @@ let tickets: Ticket[] = [
 		blocked: false,
 	},
 ];
+
 function saveTickets(): void {
 	localStorage.setItem("tickets", JSON.stringify(tickets));
 }
@@ -435,7 +436,7 @@ function saveTicket(ticket: Ticket): void {
 	}
 
 	if (hours.value === "" || Number(hours.value) < 0) {
-		alert("Enter valid remaining hours.");
+		alert("Enter remaining hours.");
 		return;
 	}
 
