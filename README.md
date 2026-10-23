@@ -39,3 +39,16 @@ Changed some CSS and made slight changes in JS files.
 Everything mentioned above progression logs works.
 No blockers except the lack of idea what to do.
 For friday I will turn in the project, I still have no idea what to add or work more on.
+
+Progress Friday october 23 2026.
+I made the CSS look better before lunch and a little bit after. Now I will make my final commit as I commit this readme.
+
+About RDS: RDS or Release Decision System is a project we've been working on in school. It is a website where you can add, remove and edit tickets as well as save to local storage. The website will then summarize counts and active hours at the bottom of the page, INCLUDING the release decision showing if they should release or not. The website also has some extra features like Search ticket by ID, filter tickets and sort tickets.
+
+Features working: As explained on the question above, the website can Search tickets by id, Add tickets, Filter tickets, Sort tickets, Press on a specific ticket to edit or delete it, under those is the release analysis showing counts for classifications, total ticket amount and total active hours, and the final release decision being highlighted.
+
+Tech-stack: HTML, CSS, Javascript/Typescript.
+
+Any blocker: No blockers.
+
+Future work: Future work could be adding user login, database for the tickets, maybe timelines (like dates for when the tickets should be done), a better UI with maybe a dark/light mode toggle, and a better search for title, owners, etc.
